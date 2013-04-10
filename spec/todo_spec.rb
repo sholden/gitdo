@@ -1,13 +1,19 @@
 require 'spec_helper'
 
 describe 'Todo' do
-  let(:user) { 'sholden' }
   let(:comment) { 'comment' }
-  let(:updated_at) { Time.now }
+  let(:file) { 'file' }
+  let(:line) { 1 }
+  let(:author) { 'author' }
+  let(:email) { 'email' }
+  let(:created_at) { Time.now }
 
-  subject { Gitdo::Todo.new(user, comment, updated_at)}
+  subject { Gitdo::Todo.new(comment, file, line, author, email, created_at)}
 
-  its(:user) { should == user }
   its(:comment) { should == comment }
-  its(:updated_at) { should == updated_at }
+  its(:file) { should == file }
+  its(:line) { should == line }
+  its(:author) { should == author }
+  its(:email) { should == email }
+  its(:created_at) { should == created_at }
 end

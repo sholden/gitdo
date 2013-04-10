@@ -1,9 +1,9 @@
 module Gitdo
   class Todo
-    attr_reader :user, :comment, :updated_at
+    attr_reader :comment, :file, :line, :author, :email, :created_at
 
-    def initialize(user, comment, updated_at)
-      @user, @comment, @updated_at = user, comment, updated_at
+    def initialize(comment, file, line, author, email, created_at)
+      @comment, @file, @line, @author, @email, @created_at =  comment, file, line, author, email, created_at
     end
   end
 end
