@@ -9,7 +9,7 @@ Gem::Specification.new do |gem|
   gem.authors       = ["Scott Holden"]
   gem.email         = ["scott@sshconnection.com"]
   gem.description   = %q{Gem to find todos}
-  gem.summary       = %q{Find your todos through git blame either committed by you or in the format of TODO-username}
+  gem.summary       = %q{Find your todos through git blame either committed by you}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)
