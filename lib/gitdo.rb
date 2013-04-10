@@ -1,5 +1,8 @@
 require "gitdo/version"
+require 'grit'
+
+require 'gitdo/scanner'
 
 module Gitdo
-  # Your code goes here...
+
 end
