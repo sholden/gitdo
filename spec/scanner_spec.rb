@@ -9,5 +9,7 @@ describe 'Scanner' do
     subject.path.should match(/.+\/spec\/fixtures$/)
   end
 
+  it 'finds todos in a file' do
 
+  end
 end
