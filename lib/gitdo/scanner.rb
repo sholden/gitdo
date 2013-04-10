@@ -7,6 +7,7 @@ module Gitdo
       @tree = options[:tree] || 'master'
       @author = options[:author]
       @email = options[:email]
+      @debug = options[:debug]
     end
 
     def repo
@@ -20,9 +21,14 @@ module Gitdo
     def each_todo
       if block_given?
         blobs.each do |blob|
-          blame = blame(blob[:path])
-          blame && blame.lines.each do |line|
-            yield build_todo(blob[:path], line) if match(line)
+          puts "Scanning #{blob[:path]}" if @debug
+
+          blame = blame(File.join(path, blob[:path]))
+          if blame
+            puts "Found #{blame.lines.length} lines"
+            blame.lines.each do |line|
+              yield build_todo(blob[:path], line) if match(line)
+            end
           end
         end
       else
@@ -34,6 +40,7 @@ module Gitdo
       # For some reason blame is blowing up because of an empty commit.id, not sure why this condition is happening.
       repo.blame(path)
     rescue NoMethodError => e
+      puts "Blame raised an exception!" if @debug
       raise unless e.message == "undefined method `id' for nil:NilClass"
       nil
     end
@@ -48,6 +55,13 @@ module Gitdo
       match = comment(line)
       match &&= line.commit.author == author if author
       match &&= line.commit.email == email if email
+      if @debug
+        if match
+          puts "Matched: #{line.line}"
+        else
+          puts "Skipped: #{line.line}"
+        end
+      end
       match
     end
 

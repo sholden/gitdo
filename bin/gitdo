@@ -22,11 +22,6 @@ rescue LoadError
   exit(1)
 end
 
-if ARGV[0]
-  scanner = Gitdo::Scanner.new(ARGV[0])
-  reporter = Gitdo::ConsoleReporter.new(scanner)
-  reporter.run!
-else
-  puts "Usage: gitdo [path]"
-end
-
+scanner = Gitdo::Scanner.new(Dir.pwd)
+reporter = Gitdo::ConsoleReporter.new(scanner)
+reporter.run!
