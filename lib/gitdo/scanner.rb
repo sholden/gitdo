@@ -2,6 +2,8 @@ module Gitdo
   class Scanner
     attr_reader :path, :tree, :author, :email
 
+    TODO_REGEX = /.*[#\/]\s*TODO:?\s*(\S(.+))\s*$/
+
     def initialize(path, options = {})
       @path = path
       @tree = options[:tree] || 'master'
@@ -18,11 +20,17 @@ module Gitdo
       repo.lstree(tree, recursive: true).select{|o| o[:type] == 'blob'}
     end
 
+    def todo_files
+      Dir[File.join(path), '**/*'].reject{|f| File.directory?(f)}.select{|f| match_file(f)}
+    end
+
     def each_todo
       if block_given?
-        blobs.each do |blob|
-          puts "Scanning #{blob[:path]}" if @debug
+        todo_files = self.todo_files
 
+        blobs.each do |blob|
+          next unless todo_files.include?(blob[:path])
+          puts "Scanning #{blob[:path]}" if @debug
           blame = blame(File.join(path, blob[:path]))
           if blame
             puts "Found #{blame.lines.length} lines" if @debug
@@ -65,6 +73,10 @@ module Gitdo
       match
     end
 
+    def match_file(file)
+      File.read(file) =~ TODO_REGEX
+    end
+
     def build_todo(path, line)
       commit = line.commit
       author = line.commit.author
@@ -72,7 +84,7 @@ module Gitdo
     end
 
     def comment(line)
-      line.line =~ /.*[#\/]\s*TODO:?\s*(\S(.+))\s*$/ && $1
+      line.line =~ TODO_REGEX && $1
     end
   end
 end
