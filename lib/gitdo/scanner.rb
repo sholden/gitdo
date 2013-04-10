@@ -39,9 +39,7 @@ module Gitdo
     end
 
     def todos
-      todos = []
-      each_todo{|t| todos << t}
-      todos
+      each_todo.to_a
     end
 
   private
