@@ -22,6 +22,6 @@ rescue LoadError
   exit(1)
 end
 
-scanner = Gitdo::Scanner.new(Dir.pwd)
+scanner = Gitdo::Scanner.new(Dir.pwd, debug: ENV['DEBUG'])
 reporter = Gitdo::ConsoleReporter.new(scanner)
 reporter.run!

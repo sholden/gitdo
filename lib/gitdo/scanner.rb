@@ -21,7 +21,7 @@ module Gitdo
     end
 
     def todo_files
-      Dir[File.join(path), '**/*'].reject{|f| File.directory?(f)}.select{|f| match_file(f)}
+      Dir[File.join(path), '**/*.rb'].reject{|f| File.directory?(f)}.select{|f| match_file(f)}
     end
 
     def each_todo
@@ -74,7 +74,11 @@ module Gitdo
     end
 
     def match_file(file)
+      puts "Matching file: #{file}" if @debug
+      return false if binary?(file)
       File.read(file) =~ TODO_REGEX
+    rescue
+      false
     end
 
     def build_todo(path, line)
@@ -85,6 +89,33 @@ module Gitdo
 
     def comment(line)
       line.line =~ TODO_REGEX && $1
+    end
+
+    #totally stolen from rdoc
+    def binary?(file)
+      return false if file =~ /\.(rb|txt)$/
+
+      s = File.read(file, 1024) or return false
+
+      have_encoding = s.respond_to? :encoding
+
+      if have_encoding then
+        return false if s.encoding != Encoding::ASCII_8BIT and s.valid_encoding?
+      end
+
+      return true if s[0, 2] == Marshal.dump('')[0, 2] or s.index("\x00")
+
+      if have_encoding then
+        s.force_encoding Encoding.default_external
+
+        not s.valid_encoding?
+      else
+        if 0.respond_to? :fdiv then
+          s.count("\x00-\x7F", "^ -~\t\r\n").fdiv(s.size) > 0.3
+        else # HACK 1.8.6
+          (s.count("\x00-\x7F", "^ -~\t\r\n").to_f / s.size) > 0.3
+        end
+      end
     end
   end
 end
