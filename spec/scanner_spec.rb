@@ -30,6 +30,8 @@ describe 'Scanner' do
     its(:email) { should == 'scott@sshconnection.com' }
   end
 
+  its(:todo_files) { should have(1).file }
+
   its(:blobs) { should_not be_empty }
 
   it 'finds example.rb' do
