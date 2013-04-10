@@ -25,7 +25,7 @@ module Gitdo
 
           blame = blame(File.join(path, blob[:path]))
           if blame
-            puts "Found #{blame.lines.length} lines"
+            puts "Found #{blame.lines.length} lines" if @debug
             blame.lines.each do |line|
               yield build_todo(blob[:path], line) if match(line)
             end
