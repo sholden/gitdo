@@ -21,7 +21,16 @@ module Gitdo
     end
 
     def todo_files
-      Dir[File.join(path), '**/*.rb'].reject{|f| File.directory?(f)}.select{|f| match_file(f)}
+      if `ack --version`[0..2] == 'ack'
+        files = [];
+        ack_dump_lines = `ack --ruby "TODO"`.split("\n")
+        ack_dump_lines.each do |line|
+          files << line.split(':')[0]
+        end
+      else
+        files = Dir[File.join(path), '**/*.rb'].reject{|f| File.directory?(f)}
+      end
+      files.select{|f| match_file(f)}
     end
 
     def each_todo
